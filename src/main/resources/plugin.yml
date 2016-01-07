@@ -1,0 +1,4 @@
+name: KWBungee
+main: org.kwstudios.play.kwbungee.loader.PluginLoader
+version: 1.0.1
+author: Ybrin, Zimonzk
