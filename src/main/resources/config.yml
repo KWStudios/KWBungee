@@ -1,0 +1,5 @@
+# Default Configuration, if you have any problems, please read the leaflet or ask your doctor or pharmacist.
+
+settings:
+  # The authorization needed for the kw-api
+  authorization: password

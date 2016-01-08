@@ -5,12 +5,15 @@ import java.util.Random;
 import org.kwstudios.play.kwbungee.toolbox.ConstantHolder;
 import org.kwstudios.play.kwbungee.toolbox.MotdListGetter;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.ServerPing;
+import net.md_5.bungee.api.chat.BaseComponent;
+import net.md_5.bungee.api.chat.TextComponent;
+import net.md_5.bungee.api.connection.ProxiedPlayer;
+import net.md_5.bungee.api.event.PostLoginEvent;
 import net.md_5.bungee.api.event.ProxyPingEvent;
 import net.md_5.bungee.api.plugin.Listener;
 import net.md_5.bungee.event.EventHandler;
-
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.ServerPing;
 
 public class EventListener implements Listener {
 
@@ -33,6 +36,15 @@ public class EventListener implements Listener {
 		} catch (Exception e) {
 
 		}
+	}
+
+	@EventHandler
+	public void onPlayerConnected(PostLoginEvent event) {
+		ProxiedPlayer player = event.getPlayer();
+		BaseComponent header = new TextComponent(ChatColor.GREEN + player.getServer().getInfo().getName());
+		BaseComponent footer = new TextComponent(
+				ChatColor.YELLOW + "KWStudios" + ChatColor.GRAY + "." + "org" + ChatColor.RESET + "Network");
+		player.setTabHeader(header, footer);
 	}
 
 }
