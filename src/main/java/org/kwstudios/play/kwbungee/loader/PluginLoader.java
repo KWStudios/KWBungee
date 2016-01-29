@@ -2,6 +2,7 @@ package org.kwstudios.play.kwbungee.loader;
 
 import java.util.HashMap;
 
+import org.kwstudios.play.kwbungee.commands.LobbyCommand;
 import org.kwstudios.play.kwbungee.listener.EventListener;
 import org.kwstudios.play.kwbungee.toolbox.MotdListGetter;
 
@@ -22,6 +23,8 @@ public class PluginLoader extends Plugin {
 		MotdListGetter.getMotdsFromFile();
 
 		getProxy().getPluginManager().registerListener(this, new EventListener());
+
+		getProxy().getPluginManager().registerCommand(this, new LobbyCommand());
 	}
 
 	public void setupApiHashMaps() {
