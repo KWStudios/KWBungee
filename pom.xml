@@ -33,6 +33,14 @@
 			<id>bungeecord-repo</id>
 			<url>https://oss.sonatype.org/content/repositories/snapshots</url>
 		</repository>
+		<repository>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<id>bintray-ybrin-docopt</id>
+			<name>bintray</name>
+			<url>http://dl.bintray.com/ybrin/maven</url>
+		</repository>
 	</repositories>
 
 	<dependencies>
@@ -48,6 +56,12 @@
 			<version>1.8-SNAPSHOT</version>
 			<type>jar</type>
 			<scope>provided</scope>
+		</dependency>
+		<dependency>
+			<groupId>de.simonsator</groupId>
+			<artifactId>partyandfriends</artifactId>
+			<version>1.0.29</version>
+			<type>jar</type>
 		</dependency>
 	</dependencies>
 </project>
