@@ -6,5 +6,7 @@ public class ConstantHolder {
 
 	public static final String MOTD_PREFIX = ChatColor.DARK_PURPLE.toString() + ChatColor.BOLD.toString() + "KWStudios"
 			+ ChatColor.RESET + ":" + " " + ChatColor.GOLD + ChatColor.ITALIC;
+	
+	public static final String KW_CHANNEL_NAME = "KWBungee";
 
 }

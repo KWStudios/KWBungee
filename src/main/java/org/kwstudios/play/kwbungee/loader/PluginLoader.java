@@ -3,7 +3,9 @@ package org.kwstudios.play.kwbungee.loader;
 import java.util.HashMap;
 
 import org.kwstudios.play.kwbungee.commands.LobbyCommand;
+import org.kwstudios.play.kwbungee.listener.BukkitMessageListener;
 import org.kwstudios.play.kwbungee.listener.EventListener;
+import org.kwstudios.play.kwbungee.toolbox.ConstantHolder;
 import org.kwstudios.play.kwbungee.toolbox.MotdListGetter;
 
 import net.md_5.bungee.api.plugin.Plugin;
@@ -21,9 +23,19 @@ public class PluginLoader extends Plugin {
 		PluginLoader.instance = this;
 
 		MotdListGetter.getMotdsFromFile();
-
+		
+		registerCommands();
+		registerListeners();
+	}
+	
+	private void registerListeners() {
 		getProxy().getPluginManager().registerListener(this, new EventListener());
-
+		
+		getProxy().getPluginManager().registerListener(this, new BukkitMessageListener());
+		getProxy().registerChannel(ConstantHolder.KW_CHANNEL_NAME);
+	}
+	
+	private void registerCommands() {
 		getProxy().getPluginManager().registerCommand(this, new LobbyCommand());
 	}
 
