@@ -67,6 +67,9 @@ public class BukkitMessageListener implements Listener {
 		if (request == null) {
 			return;
 		}
+		if (!request.isRequest()) {
+			return;
+		}
 
 		ProxiedPlayer player = PluginLoader.getInstance().getProxy().getPlayer(UUID.fromString(request.getUuid()));
 		PlayerParty party = PartyAPI.getParty(player);
