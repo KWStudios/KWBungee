@@ -7,16 +7,22 @@ public class PartyRequest {
 	private String players_in_party[];
 	private String uuids_in_party[];
 	private boolean isLeader;
-	private boolean isRequest = false;
+	private boolean isRequest;
 
 	public PartyRequest(String player, String uuid, String[] players_in_party, String[] uuids_in_party,
-			boolean isLeader) {
+			boolean isLeader, boolean isRequest) {
 		super();
 		this.player = player;
 		this.uuid = uuid;
 		this.players_in_party = players_in_party;
 		this.uuids_in_party = uuids_in_party;
 		this.isLeader = isLeader;
+		this.isRequest = isRequest;
+	}
+
+	public PartyRequest(String player, String uuid, String[] players_in_party, String[] uuids_in_party,
+			boolean isLeader) {
+		this(player, uuid, players_in_party, uuids_in_party, isLeader, false);
 	}
 
 	public String getPlayer() {
@@ -41,10 +47,6 @@ public class PartyRequest {
 
 	public boolean isRequest() {
 		return isRequest;
-	}
-
-	public void setRequest(boolean isRequest) {
-		this.isRequest = isRequest;
 	}
 
 }
