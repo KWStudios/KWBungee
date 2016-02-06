@@ -7,6 +7,9 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.UUID;
 
+import org.kwstudios.play.kwbungee.enums.BungeeMessageAction;
+import org.kwstudios.play.kwbungee.json.BungeeRequest;
+import org.kwstudios.play.kwbungee.json.FriendsRequest;
 import org.kwstudios.play.kwbungee.json.PartyRequest;
 import org.kwstudios.play.kwbungee.loader.PluginLoader;
 import org.kwstudios.play.kwbungee.toolbox.ConstantHolder;
@@ -14,6 +17,7 @@ import org.kwstudios.play.kwbungee.toolbox.ConstantHolder;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
+import de.simonsator.partyandfriends.api.FriendsAPI;
 import de.simonsator.partyandfriends.api.PartyAPI;
 import de.simonsator.partyandfriends.party.PlayerParty;
 import net.md_5.bungee.api.config.ServerInfo;
@@ -58,9 +62,9 @@ public class BukkitMessageListener implements Listener {
 
 	private void parseMessage(String message, Server server) {
 		Gson gson = new Gson();
-		PartyRequest request = null;
+		BungeeRequest request = null;
 		try {
-			request = gson.fromJson(message, PartyRequest.class);
+			request = gson.fromJson(message, BungeeRequest.class);
 		} catch (JsonSyntaxException e) {
 			throw new JsonSyntaxException("The message received was corrupt. It should be JSON Syntax");
 		}
@@ -71,31 +75,49 @@ public class BukkitMessageListener implements Listener {
 			return;
 		}
 
-		ProxiedPlayer player = PluginLoader.getInstance().getProxy().getPlayer(UUID.fromString(request.getUuid()));
-		PlayerParty party = PartyAPI.getParty(player);
-		if (party == null) {
-			// TODO Send message back with empty player Array
-			PartyRequest response = new PartyRequest(request.getPlayer(), request.getUuid(), new String[] {},
-					new String[] {}, false);
-			String responseJson = gson.toJson(response);
-			sendMessage(responseJson, server.getInfo());
-			return;
+		for (BungeeMessageAction action : request.getActions()) {
+			if (action == BungeeMessageAction.PARTY) {
+				PartyRequest partyRequest = request.getPartyRequest();
+				ProxiedPlayer player = PluginLoader.getInstance().getProxy()
+						.getPlayer(UUID.fromString(partyRequest.getUuid()));
+				PlayerParty party = PartyAPI.getParty(player);
+				if (party == null) {
+					// TODO Send message back with empty player Array
+					PartyRequest response = new PartyRequest(partyRequest.getPlayer(), partyRequest.getUuid(),
+							new String[] {}, new String[] {}, false);
+					String responseJson = gson.toJson(response);
+					sendMessage(responseJson, server.getInfo());
+					return;
+				}
+
+				boolean isLeader = party.isleader(player);
+
+				String players[] = new String[party.getAllPlayersInParty().size()];
+				String uuids[] = new String[party.getAllPlayersInParty().size()];
+				for (int i = 0; i < party.getAllPlayersInParty().size(); i++) {
+					players[i] = party.getAllPlayersInParty().get(i).getName();
+					uuids[i] = party.getAllPlayersInParty().get(i).getUniqueId().toString();
+				}
+
+				PartyRequest response = new PartyRequest(partyRequest.getPlayer(), partyRequest.getUuid(), players,
+						uuids, isLeader);
+				BungeeRequest bungeeResponse = new BungeeRequest(response, null);
+
+				String responseJson = gson.toJson(bungeeResponse);
+
+				sendMessage(responseJson, server.getInfo());
+			} else if (action == BungeeMessageAction.FRIENDS) {
+				FriendsRequest friendsRequest = request.getFriendsRequest();
+
+				FriendsRequest response = new FriendsRequest(friendsRequest.getPlayer(),
+						FriendsAPI.getFriends(friendsRequest.getPlayer()));
+				BungeeRequest bungeeResponse = new BungeeRequest(null, response);
+
+				String responseJson = gson.toJson(bungeeResponse);
+
+				sendMessage(responseJson, server.getInfo());
+			}
 		}
-
-		boolean isLeader = party.isleader(player);
-
-		String players[] = new String[party.getAllPlayersInParty().size()];
-		String uuids[] = new String[party.getAllPlayersInParty().size()];
-		for (int i = 0; i < party.getAllPlayersInParty().size(); i++) {
-			players[i] = party.getAllPlayersInParty().get(i).getName();
-			uuids[i] = party.getAllPlayersInParty().get(i).getUniqueId().toString();
-		}
-
-		PartyRequest response = new PartyRequest(request.getPlayer(), request.getUuid(), players, uuids, isLeader);
-
-		String responseJson = gson.toJson(response);
-
-		sendMessage(responseJson, server.getInfo());
 
 	}
 
