@@ -85,7 +85,8 @@ public class BukkitMessageListener implements Listener {
 					// TODO Send message back with empty player Array
 					PartyRequest response = new PartyRequest(partyRequest.getPlayer(), partyRequest.getUuid(),
 							new String[] {}, new String[] {}, false);
-					String responseJson = gson.toJson(response);
+					BungeeRequest bungeeResponse = new BungeeRequest(response, null);
+					String responseJson = gson.toJson(bungeeResponse);
 					sendMessage(responseJson, server.getInfo());
 					return;
 				}
