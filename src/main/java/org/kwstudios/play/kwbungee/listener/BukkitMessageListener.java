@@ -5,6 +5,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
 import java.io.IOException;
+import java.util.List;
 import java.util.UUID;
 
 import org.kwstudios.play.kwbungee.enums.BungeeMessageAction;
@@ -17,9 +18,11 @@ import org.kwstudios.play.kwbungee.toolbox.ConstantHolder;
 import com.google.gson.Gson;
 import com.google.gson.JsonSyntaxException;
 
-import de.simonsator.partyandfriends.api.FriendsAPI;
-import de.simonsator.partyandfriends.api.PartyAPI;
-import de.simonsator.partyandfriends.party.PlayerParty;
+import de.simonsator.partyandfriends.api.pafplayers.OnlinePAFPlayer;
+import de.simonsator.partyandfriends.api.pafplayers.PAFPlayer;
+import de.simonsator.partyandfriends.api.pafplayers.PAFPlayerManager;
+import de.simonsator.partyandfriends.api.party.PartyAPI;
+import de.simonsator.partyandfriends.api.party.PlayerParty;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -80,7 +83,8 @@ public class BukkitMessageListener implements Listener {
 				PartyRequest partyRequest = request.getPartyRequest();
 				ProxiedPlayer player = PluginLoader.getInstance().getProxy()
 						.getPlayer(UUID.fromString(partyRequest.getUuid()));
-				PlayerParty party = PartyAPI.getParty(player);
+				OnlinePAFPlayer pafPlayer = PAFPlayerManager.getInstance().getPlayer(player);
+				PlayerParty party = PartyAPI.getParty(pafPlayer);
 				if (party == null) {
 					// TODO Send message back with empty player Array
 					PartyRequest response = new PartyRequest(partyRequest.getPlayer(), partyRequest.getUuid(),
@@ -91,13 +95,13 @@ public class BukkitMessageListener implements Listener {
 					return;
 				}
 
-				boolean isLeader = party.isleader(player);
+				boolean isLeader = party.isLeader(pafPlayer);
 
-				String players[] = new String[party.getAllPlayersInParty().size()];
-				String uuids[] = new String[party.getAllPlayersInParty().size()];
-				for (int i = 0; i < party.getAllPlayersInParty().size(); i++) {
-					players[i] = party.getAllPlayersInParty().get(i).getName();
-					uuids[i] = party.getAllPlayersInParty().get(i).getUniqueId().toString();
+				String players[] = new String[party.getPlayers().size()];
+				String uuids[] = new String[party.getPlayers().size()];
+				for (int i = 0; i < party.getPlayers().size(); i++) {
+					players[i] = party.getPlayers().get(i).getName();
+					uuids[i] = party.getPlayers().get(i).getUniqueId().toString();
 				}
 
 				PartyRequest response = new PartyRequest(partyRequest.getPlayer(), partyRequest.getUuid(), players,
@@ -110,8 +114,16 @@ public class BukkitMessageListener implements Listener {
 			} else if (action == BungeeMessageAction.FRIENDS) {
 				FriendsRequest friendsRequest = request.getFriendsRequest();
 
-				FriendsRequest response = new FriendsRequest(friendsRequest.getPlayer(),
-						FriendsAPI.getFriends(friendsRequest.getPlayer()));
+				ProxiedPlayer player = PluginLoader.getInstance().getProxy().getPlayer(friendsRequest.getPlayer());
+				OnlinePAFPlayer pafPlayer = PAFPlayerManager.getInstance().getPlayer(player);
+				
+				List<PAFPlayer> friends = pafPlayer.getFriends();
+				String[] friendNames = new String[friends.size()];
+				for (int i = 0; i < friends.size(); i++) {
+					friendNames[i] = friends.get(i).getName();
+				}
+				
+				FriendsRequest response = new FriendsRequest(friendsRequest.getPlayer(), friendNames);
 				BungeeRequest bungeeResponse = new BungeeRequest(null, response);
 
 				String responseJson = gson.toJson(bungeeResponse);
