@@ -7,6 +7,8 @@ import java.io.DataOutputStream;
 import java.io.IOException;
 import java.util.List;
 import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.kwstudios.play.kwbungee.enums.BungeeMessageAction;
 import org.kwstudios.play.kwbungee.json.BungeeRequest;
@@ -112,34 +114,34 @@ public class BukkitMessageListener implements Listener {
 
 				sendMessage(responseJson, server.getInfo());
 			} else if (action == BungeeMessageAction.FRIENDS) {
-				System.out.println("1. FRIENDS");
+				Logger.getLogger("abbb").log(Level.INFO, "1. FRIENDS");
 				FriendsRequest friendsRequest = request.getFriendsRequest();
 
-				System.out.println("2. REQUEST");
+				Logger.getLogger("abbb").log(Level.INFO,"2. REQUEST");
 				ProxiedPlayer player = PluginLoader.getInstance().getProxy().getPlayer(friendsRequest.getPlayer());
-				System.out.println("3. ProxiedPlayer");
+				Logger.getLogger("abbb").log(Level.INFO,"3. ProxiedPlayer");
 				OnlinePAFPlayer pafPlayer = PAFPlayerManager.getInstance().getPlayer(player);
-				System.out.println("4. PafPlayer");
+				Logger.getLogger("abbb").log(Level.INFO,"4. PafPlayer");
 				
 				List<PAFPlayer> friends = pafPlayer.getFriends();
-				System.out.println("5. Friends " + friends.size());
+				Logger.getLogger("abbb").log(Level.INFO,"5. Friends " + friends.size());
 				String[] friendNames = new String[friends.size()];
-				System.out.println("6. FriendNames");
+				Logger.getLogger("abbb").log(Level.INFO,"6. FriendNames");
 				for (int i = 0; i < friends.size(); i++) {
 					friendNames[i] = friends.get(i).getName();
 				}
-				System.out.println("7. for done");
+				Logger.getLogger("abbb").log(Level.INFO,"7. for done");
 				
 				FriendsRequest response = new FriendsRequest(friendsRequest.getPlayer(), friendNames);
-				System.out.println("8. response");
+				Logger.getLogger("abbb").log(Level.INFO,"8. response");
 				BungeeRequest bungeeResponse = new BungeeRequest(null, response);
-				System.out.println("9. bungeeresponse");
+				Logger.getLogger("abbb").log(Level.INFO,"9. bungeeresponse");
 
 				String responseJson = gson.toJson(bungeeResponse);
-				System.out.println("10. json");
+				Logger.getLogger("abbb").log(Level.INFO,"10. json");
 
 				sendMessage(responseJson, server.getInfo());
-				System.out.println("11. sent\ndone.");
+				Logger.getLogger("abbb").log(Level.INFO,"11. sent\ndone.");
 			}
 		}
 
