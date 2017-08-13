@@ -112,23 +112,34 @@ public class BukkitMessageListener implements Listener {
 
 				sendMessage(responseJson, server.getInfo());
 			} else if (action == BungeeMessageAction.FRIENDS) {
+				System.out.println("1. FRIENDS");
 				FriendsRequest friendsRequest = request.getFriendsRequest();
 
+				System.out.println("2. REQUEST");
 				ProxiedPlayer player = PluginLoader.getInstance().getProxy().getPlayer(friendsRequest.getPlayer());
+				System.out.println("3. ProxiedPlayer");
 				OnlinePAFPlayer pafPlayer = PAFPlayerManager.getInstance().getPlayer(player);
+				System.out.println("4. PafPlayer");
 				
 				List<PAFPlayer> friends = pafPlayer.getFriends();
+				System.out.println("5. Friends " + friends.size());
 				String[] friendNames = new String[friends.size()];
+				System.out.println("6. FriendNames");
 				for (int i = 0; i < friends.size(); i++) {
 					friendNames[i] = friends.get(i).getName();
 				}
+				System.out.println("7. for done");
 				
 				FriendsRequest response = new FriendsRequest(friendsRequest.getPlayer(), friendNames);
+				System.out.println("8. response");
 				BungeeRequest bungeeResponse = new BungeeRequest(null, response);
+				System.out.println("9. bungeeresponse");
 
 				String responseJson = gson.toJson(bungeeResponse);
+				System.out.println("10. json");
 
 				sendMessage(responseJson, server.getInfo());
+				System.out.println("11. sent\ndone.");
 			}
 		}
 
