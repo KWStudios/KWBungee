@@ -60,7 +60,7 @@
 		<dependency>
 			<groupId>de.simonsator</groupId>
 			<artifactId>partyandfriends</artifactId>
-			<version>1.0.29</version>
+			<version>1.0.62</version>
 			<type>jar</type>
 		</dependency>
 	</dependencies>
