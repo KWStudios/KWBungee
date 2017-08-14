@@ -25,6 +25,8 @@ import de.simonsator.partyandfriends.api.pafplayers.PAFPlayer;
 import de.simonsator.partyandfriends.api.pafplayers.PAFPlayerManager;
 import de.simonsator.partyandfriends.api.party.PartyAPI;
 import de.simonsator.partyandfriends.api.party.PlayerParty;
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.config.ServerInfo;
 import net.md_5.bungee.api.connection.ProxiedPlayer;
 import net.md_5.bungee.api.connection.Server;
@@ -66,6 +68,7 @@ public class BukkitMessageListener implements Listener {
 	}
 
 	private void parseMessage(String message, Server server) {
+		System.out.println("Parsing a message!");
 		Gson gson = new Gson();
 		BungeeRequest request = null;
 		try {
@@ -82,6 +85,7 @@ public class BukkitMessageListener implements Listener {
 
 		for (BungeeMessageAction action : request.getActions()) {
 			if (action == BungeeMessageAction.PARTY) {
+				System.out.println("Partey!");
 				PartyRequest partyRequest = request.getPartyRequest();
 				ProxiedPlayer player = PluginLoader.getInstance().getProxy()
 						.getPlayer(UUID.fromString(partyRequest.getUuid()));
@@ -114,35 +118,25 @@ public class BukkitMessageListener implements Listener {
 
 				sendMessage(responseJson, server.getInfo());
 			} else if (action == BungeeMessageAction.FRIENDS) {
-				Logger.getLogger("abbb").log(Level.INFO, "1. FRIENDS");
+				System.out.println("Friends!");
 				FriendsRequest friendsRequest = request.getFriendsRequest();
 
-				Logger.getLogger("abbb").log(Level.INFO,"2. REQUEST");
 				ProxiedPlayer player = PluginLoader.getInstance().getProxy().getPlayer(friendsRequest.getPlayer());
-				Logger.getLogger("abbb").log(Level.INFO,"3. ProxiedPlayer");
 				OnlinePAFPlayer pafPlayer = PAFPlayerManager.getInstance().getPlayer(player);
-				Logger.getLogger("abbb").log(Level.INFO,"4. PafPlayer");
 				
 				List<PAFPlayer> friends = pafPlayer.getFriends();
-				Logger.getLogger("abbb").log(Level.INFO,"5. Friends " + friends.size());
 				String[] friendNames = new String[friends.size()];
-				Logger.getLogger("abbb").log(Level.INFO,"6. FriendNames");
 				for (int i = 0; i < friends.size(); i++) {
 					friendNames[i] = friends.get(i).getName();
 				}
-				Logger.getLogger("abbb").log(Level.INFO,"7. for done");
 				
 				FriendsRequest response = new FriendsRequest(friendsRequest.getPlayer(), friendNames);
-				Logger.getLogger("abbb").log(Level.INFO,"8. response");
 				BungeeRequest bungeeResponse = new BungeeRequest(null, response);
-				Logger.getLogger("abbb").log(Level.INFO,"9. bungeeresponse");
-
+				
 				String responseJson = gson.toJson(bungeeResponse);
-				Logger.getLogger("abbb").log(Level.INFO,"10. json");
-
+				
 				sendMessage(responseJson, server.getInfo());
-				Logger.getLogger("abbb").log(Level.INFO,"11. sent\ndone.");
-			}
+				}
 		}
 
 	}
